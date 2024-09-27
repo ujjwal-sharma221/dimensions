@@ -1,27 +1,42 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { LoaderPinwheel } from "lucide-react";
 
-import { PostDataType } from "@/lib/types";
+import { PostsPageType } from "@/lib/types";
 import { Post } from "@/components/post/post";
+import kyInstance from "@/lib/ky";
+import { InfiniteScrollContainer } from "@/components/infiniteScroll-container";
+import { PostLoadingSkeleton } from "@/components/post/post-loading-skelton";
 
 export function Feed() {
-  const query = useQuery<PostDataType[]>({
-    queryKey: ["for-you", "post-feed"],
-    queryFn: async () => {
-      const res = await fetch("/api/posts/for-you");
-      if (!res.ok)
-        throw new Error(`Failed to fetch posts with status code ${res.status}`);
+  const { data, fetchNextPage, hasNextPage, isFetching, status } =
+    useInfiniteQuery({
+      queryKey: ["for-you", "post-feed"],
+      queryFn: ({ pageParam }) =>
+        kyInstance
+          .get(
+            "/api/posts/for-you",
+            pageParam ? { searchParams: { cursor: pageParam } } : {},
+          )
+          .json<PostsPageType>(),
+      initialPageParam: null as string | null,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    });
 
-      return res.json();
-    },
-  });
+  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
 
-  if (query.status === "pending")
-    return <LoaderPinwheel className="mx-auto animate-spin" />;
+  if (status === "pending") return <PostLoadingSkeleton />;
 
-  if (query.status === "error")
+  if (status === "success" && !posts.length && !hasNextPage)
+    return (
+      <p className="text-center text-muted">
+        There are no posts, you are all alonwe and that&apos;s okay.. you just
+        need a better personality
+      </p>
+    );
+
+  if (status === "error")
     return (
       <p className="text-center text-destructive">
         An error occurred while loading posts
@@ -29,10 +44,14 @@ export function Feed() {
     );
 
   return (
-    <>
-      {query.data.map((post) => (
+    <InfiniteScrollContainer
+      onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
+      className="flex flex-col gap-4"
+    >
+      {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
-    </>
+      {isFetching && <LoaderPinwheel className="mx-auto my-3 animate-spin" />}
+    </InfiniteScrollContainer>
   );
 }
