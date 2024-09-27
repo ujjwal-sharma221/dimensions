@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TentTree, UserRound } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useSession } from "@/lib/session-provider";
 import {
@@ -22,6 +23,7 @@ interface UserButtonProps {
 
 export const UserButton = ({ className }: UserButtonProps) => {
   const { user } = useSession();
+  const queryClient = useQueryClient();
 
   return (
     <DropdownMenu>
@@ -43,6 +45,7 @@ export const UserButton = ({ className }: UserButtonProps) => {
         <DropdownMenuItem
           className="coursor-pointer"
           onClick={() => {
+            queryClient.clear();
             logout();
           }}
         >
