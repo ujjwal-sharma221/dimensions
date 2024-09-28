@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { TypeOf } from "zod";
 
 export function getUserDataSelect(userId: string) {
   return {
@@ -6,6 +7,8 @@ export function getUserDataSelect(userId: string) {
     displayName: true,
     username: true,
     avatarUrl: true,
+    bio: true,
+    createdAt: true,
     followers: {
       where: {
         followerId: userId,
@@ -15,7 +18,7 @@ export function getUserDataSelect(userId: string) {
       },
     },
     _count: {
-      select: { followers: true },
+      select: { followers: true, posts: true },
     },
   } satisfies Prisma.UserSelect;
 }
@@ -41,3 +44,7 @@ export type FollowerInfoType = {
   followers: number;
   isFollowedByUser: boolean;
 };
+
+export type UserDataType = Prisma.UserGetPayload<{
+  select: ReturnType<typeof getUserDataSelect>;
+}>;

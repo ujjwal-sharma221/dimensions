@@ -3,14 +3,25 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
 import prisma from "@/lib/prisma";
-import { getUserDataSelect } from "@/lib/types";
+import { FollowerInfoType, getUserDataSelect, UserDataType } from "@/lib/types";
 import { validateRequest } from "@/lib/auth";
+import { UserAvatar } from "@/components/user-avatar";
+import { formatDate } from "date-fns";
+import { formatNumber } from "@/lib/utils";
+import { FollowerCount } from "@/components/follower-count";
+import { Button } from "@/components/ui/button";
+import { FollowButton } from "@/components/follow-button";
+import { Separator } from "@/components/ui/separator";
+import { UserPosts } from "./following-feed";
 
 interface UserPageProps {
   params: { username: string };
 }
 
-interface UserProfileProps{}
+interface UserProfileProps {
+  user: UserDataType;
+  loggedInUserId: string;
+}
 
 const getUser = cache(async (username: string, loggedInUserId: string) => {
   const user = await prisma.user.findFirst({
@@ -41,7 +52,55 @@ export async function generateMetadata({
   };
 }
 
-async function UserProfile{}
+async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
+  const followerInfo: FollowerInfoType = {
+    followers: user._count.followers,
+    isFollowedByUser: user.followers.some(
+      ({ followerId }) => followerId === loggedInUserId,
+    ),
+  };
+
+  return (
+    <div className="h-fit w-full space-y-5 rounded-xl border border-zinc-200 p-3 shadow-sm">
+      <UserAvatar
+        avatarUrl={user.avatarUrl}
+        size={250}
+        className="mx-auto size-full max-h-60 max-w-60 rounded-full"
+      />
+      <div className="flex flex-wrap gap-3 sm:flex-nowrap">
+        <div className="me-auto space-y-3">
+          <div>
+            <h1 className="text-3xl font-bold">{user.displayName}</h1>
+            <div className="text-muted-foreground">@{user.username}</div>
+          </div>
+          <div>Member since {formatDate(user.createdAt, "MMM d, yyyy")} </div>
+          <div className="flex items-center gap-3">
+            <span>
+              Posts:{" "}
+              <span className="font-semibold">
+                {formatNumber(user._count.posts)}
+              </span>
+            </span>
+            <FollowerCount userId={user.id} intialState={followerInfo} />
+          </div>
+        </div>
+        {user.id === loggedInUserId ? (
+          <Button>Edit Profile</Button>
+        ) : (
+          <FollowButton userId={user.id} intialState={followerInfo} />
+        )}
+      </div>
+      {user.bio ? (
+        <>
+          <hr />
+          <div className="overflow-hidden whitespace-pre-line break-words">
+            {user.bio}
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+}
 
 const UserPage = async ({ params: { username } }: UserPageProps) => {
   const { user: loggedInUser } = await validateRequest();
@@ -51,7 +110,11 @@ const UserPage = async ({ params: { username } }: UserPageProps) => {
 
   return (
     <main className="flex w-full min-w-0">
-      <div className="w-full min-w-0 space-y-5"></div>
+      <div className="w-full min-w-0 space-y-5">
+        <UserProfile user={user} loggedInUserId={loggedInUser.id} />
+        <Separator />
+        <UserPosts userId={user.id} />
+      </div>
     </main>
   );
 };
