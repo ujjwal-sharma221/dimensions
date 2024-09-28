@@ -7,16 +7,22 @@ import { getPostDataInlcuded, PostsPageType } from "@/lib/types";
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
+
     const pageSize = 10;
 
     const { user } = await validateRequest();
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const posts = await prisma.post.findMany({
-      include: getPostDataInlcuded(user.id),
+      where: {
+        user: {
+          followers: { some: { followerId: user.id } },
+        },
+      },
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
+      include: getPostDataInlcuded(user.id),
     });
 
     const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;

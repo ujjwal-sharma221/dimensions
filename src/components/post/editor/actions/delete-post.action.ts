@@ -2,7 +2,7 @@
 
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { PostDataInclude } from "@/lib/types";
+import { getPostDataInlcuded } from "@/lib/types";
 
 export async function DeletePost(id: string) {
   const { user } = await validateRequest();
@@ -18,7 +18,7 @@ export async function DeletePost(id: string) {
 
   const deletedPost = await prisma.post.delete({
     where: { id },
-    include: PostDataInclude,
+    include: getPostDataInlcuded(user.id),
   });
 
   return deletedPost;

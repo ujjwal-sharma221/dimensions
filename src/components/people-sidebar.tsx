@@ -4,10 +4,10 @@ import Link from "next/link";
 
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { UserDataSelect } from "@/lib/types";
 import { UserAvatar } from "./user-avatar";
-import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import { FollowButton } from "./follow-button";
+import { getUserDataSelect } from "@/lib/types";
 
 export function TrendsSidebar() {
   return (
@@ -28,8 +28,11 @@ async function WhoTofollow() {
       NOT: {
         id: user.id,
       },
+      followers: {
+        none: { followerId: user.id },
+      },
     },
-    select: UserDataSelect,
+    select: getUserDataSelect(user.id),
     take: 5,
   });
 
@@ -53,7 +56,15 @@ async function WhoTofollow() {
               </p>
             </div>
           </Link>
-          <Button className="rounded-xl px-3 py-1">Follow</Button>
+          <FollowButton
+            userId={user.id}
+            intialState={{
+              followers: user._count.followers,
+              isFollowedByUser: user.followers.some(
+                ({ followerId }) => followerId === user.id,
+              ),
+            }}
+          />
         </div>
       ))}
     </div>
