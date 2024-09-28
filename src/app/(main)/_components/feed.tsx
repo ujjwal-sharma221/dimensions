@@ -12,7 +12,7 @@ import { PostLoadingSkeleton } from "@/components/post/post-loading-skelton";
 export function Feed() {
   const { data, fetchNextPage, hasNextPage, isFetching, status } =
     useInfiniteQuery({
-      queryKey: ["for-you", "post-feed"],
+      queryKey: ["post-feed", "for-you"],
       queryFn: ({ pageParam }) =>
         kyInstance
           .get(

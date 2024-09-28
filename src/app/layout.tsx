@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           {children}
-          <Toaster closeButton richColors />
+          <Toaster closeButton richColors position="top-right" />
         </ReactQueryProvider>
       </body>
     </html>
