@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { TypeOf } from "zod";
 
 export function getUserDataSelect(userId: string) {
   return {

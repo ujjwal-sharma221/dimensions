@@ -11,9 +11,14 @@ import kyInstance from "@/lib/ky";
 interface FollowButtonProps {
   userId: string;
   intialState: FollowerInfoType;
+  className?: string;
 }
 
-export const FollowButton = ({ userId, intialState }: FollowButtonProps) => {
+export const FollowButton = ({
+  userId,
+  intialState,
+  className,
+}: FollowButtonProps) => {
   const queryClient = useQueryClient();
   const { data } = useFollowerInfo(userId, intialState);
 
@@ -47,6 +52,7 @@ export const FollowButton = ({ userId, intialState }: FollowButtonProps) => {
     <Button
       onClick={() => mutate()}
       variant={data.isFollowedByUser ? "secondary" : "default"}
+      className={className}
     >
       {data.isFollowedByUser ? "Unfollow" : "Follow"}
     </Button>
