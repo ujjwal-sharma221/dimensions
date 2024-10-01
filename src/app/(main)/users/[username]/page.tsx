@@ -9,11 +9,11 @@ import { UserAvatar } from "@/components/user-avatar";
 import { formatDate } from "date-fns";
 import { formatNumber } from "@/lib/utils";
 import { FollowerCount } from "@/components/follower-count";
-import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/follow-button";
 import { Separator } from "@/components/ui/separator";
 import { UserPosts } from "./following-feed";
 import { Linkify } from "@/components/linkify";
+import { EditProfile } from "../../_components/edit-profile";
 
 interface UserPageProps {
   params: { username: string };
@@ -86,7 +86,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
           </div>
         </div>
         {user.id === loggedInUserId ? (
-          <Button>Edit Profile</Button>
+          <EditProfile user={user} />
         ) : (
           <FollowButton userId={user.id} intialState={followerInfo} />
         )}
@@ -115,7 +115,7 @@ const UserPage = async ({ params: { username } }: UserPageProps) => {
     <main className="flex w-full min-w-0">
       <div className="w-full min-w-0 space-y-5">
         <UserProfile user={user} loggedInUserId={loggedInUser.id} />
-        <Separator />
+
         <UserPosts userId={user.id} />
       </div>
     </main>

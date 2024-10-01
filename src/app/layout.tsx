@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { fileRouter } from "./api/uploadthing/core";
+import { extractRouterConfig } from "uploadthing/server";
 
 import localFont from "next/font/local";
 import "./globals.css";
@@ -31,6 +34,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} p-2 antialiased`}
       >
+        <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>
           {children}
           <Toaster closeButton richColors position="top-right" />
