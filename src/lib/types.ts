@@ -27,6 +27,7 @@ export function getPostDataInlcuded(userId: string) {
     user: {
       select: getUserDataSelect(userId),
     },
+    attachments: true,
   } satisfies Prisma.PostInclude;
 }
 
