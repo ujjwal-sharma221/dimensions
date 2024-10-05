@@ -28,6 +28,13 @@ export function getPostDataInlcuded(userId: string) {
       select: getUserDataSelect(userId),
     },
     attachments: true,
+    likes: {
+      where: { userId },
+      select: { userId: true },
+    },
+    _count: {
+      select: { likes: true },
+    },
   } satisfies Prisma.PostInclude;
 }
 
@@ -48,3 +55,8 @@ export type FollowerInfoType = {
 export type UserDataType = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserDataSelect>;
 }>;
+
+export type LikeInfo = {
+  likes: number;
+  isLikedByUser: boolean;
+};

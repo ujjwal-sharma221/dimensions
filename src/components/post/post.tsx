@@ -11,6 +11,7 @@ import { useSession } from "@/lib/session-provider";
 import { PostMore } from "./post-more";
 import { Linkify } from "../linkify";
 import { UserToolTip } from "../user-tooltip";
+import { LikeButton } from "./like-button";
 
 interface PostProps {
   post: PostDataType;
@@ -58,6 +59,14 @@ export const Post = ({ post }: PostProps) => {
       {!!post.attachments.length && (
         <MediaPreviews attachments={post.attachments} />
       )}
+      <hr className="text-muted-foreground" />
+      <LikeButton
+        postId={post.id}
+        intialState={{
+          likes: post._count.likes,
+          isLikedByUser: post.likes.some((like) => like.userId === user.id),
+        }}
+      />
     </article>
   );
 };
