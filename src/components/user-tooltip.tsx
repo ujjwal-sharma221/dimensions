@@ -1,8 +1,9 @@
+"use client";
+
 import { PropsWithChildren } from "react";
 import Link from "next/link";
 
 import { FollowerInfoType, UserDataType } from "@/lib/types";
-import { useSession } from "@/lib/session-provider";
 import {
   Tooltip,
   TooltipContent,
@@ -13,6 +14,7 @@ import { UserAvatar } from "./user-avatar";
 import { FollowButton } from "./follow-button";
 import { Linkify } from "./linkify";
 import { FollowerCount } from "./follower-count";
+import { useSession } from "@/lib/session-provider";
 
 interface UserTooltipProps extends PropsWithChildren {
   user: UserDataType;

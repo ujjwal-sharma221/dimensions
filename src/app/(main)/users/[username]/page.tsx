@@ -10,7 +10,6 @@ import { formatDate } from "date-fns";
 import { formatNumber } from "@/lib/utils";
 import { FollowerCount } from "@/components/follower-count";
 import { FollowButton } from "@/components/follow-button";
-import { Separator } from "@/components/ui/separator";
 import { UserPosts } from "./following-feed";
 import { Linkify } from "@/components/linkify";
 import { EditProfile } from "../../_components/edit-profile";
