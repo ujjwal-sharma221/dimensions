@@ -12,6 +12,7 @@ import { PostMore } from "./post-more";
 import { Linkify } from "../linkify";
 import { UserToolTip } from "../user-tooltip";
 import { LikeButton } from "./like-button";
+import { BookmarkButton } from "./bookmark-button";
 
 interface PostProps {
   post: PostDataType;
@@ -60,13 +61,23 @@ export const Post = ({ post }: PostProps) => {
         <MediaPreviews attachments={post.attachments} />
       )}
       <hr className="text-muted-foreground" />
-      <LikeButton
-        postId={post.id}
-        intialState={{
-          likes: post._count.likes,
-          isLikedByUser: post.likes.some((like) => like.userId === user.id),
-        }}
-      />
+      <div className="flex justify-between gap-5">
+        <LikeButton
+          postId={post.id}
+          intialState={{
+            likes: post._count.likes,
+            isLikedByUser: post.likes.some((like) => like.userId === user.id),
+          }}
+        />
+        <BookmarkButton
+          postId={post.id}
+          intialState={{
+            isBookmarkedByUser: post.Bookmark.some(
+              (bookmark) => bookmark.userId === user.id,
+            ),
+          }}
+        />
+      </div>
     </article>
   );
 };

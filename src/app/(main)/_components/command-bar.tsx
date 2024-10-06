@@ -53,17 +53,32 @@ export const CommandBar = ({ className }: { className?: string }) => {
               <Link href="/">Home</Link>
             </CommandItem>
 
-            <CommandItem onSelect={() => router.push("/messages")}>
+            <CommandItem
+              onSelect={() => {
+                router.push("/messages");
+                setOpen(false);
+              }}
+            >
               <MessageSquareText className="mr-2" />
               <Link href="/messages">Messages</Link>
             </CommandItem>
 
-            <CommandItem onSelect={() => router.push("/notifications")}>
+            <CommandItem
+              onSelect={() => {
+                router.push("/notifications");
+                setOpen(false);
+              }}
+            >
               <BellDot className="mr-2" />
               <Link href="/messages">Notifications</Link>
             </CommandItem>
 
-            <CommandItem onSelect={() => router.push("/bookmarks")}>
+            <CommandItem
+              onSelect={() => {
+                router.push("/bookmark");
+                setOpen(false);
+              }}
+            >
               <BookMarked className="mr-2" />
               <Link href="/messages">Bookmarks</Link>
             </CommandItem>

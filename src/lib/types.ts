@@ -32,6 +32,7 @@ export function getPostDataInlcuded(userId: string) {
       where: { userId },
       select: { userId: true },
     },
+    Bookmark: { where: { userId }, select: { userId: true } },
     _count: {
       select: { likes: true },
     },
@@ -59,4 +60,8 @@ export type UserDataType = Prisma.UserGetPayload<{
 export type LikeInfo = {
   likes: number;
   isLikedByUser: boolean;
+};
+
+export type BookmarkInfoType = {
+  isBookmarkedByUser: boolean;
 };
