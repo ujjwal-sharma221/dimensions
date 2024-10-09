@@ -34,7 +34,7 @@ export function getPostDataInlcuded(userId: string) {
     },
     Bookmark: { where: { userId }, select: { userId: true } },
     _count: {
-      select: { likes: true },
+      select: { likes: true, comments: true },
     },
   } satisfies Prisma.PostInclude;
 }
@@ -64,4 +64,21 @@ export type LikeInfo = {
 
 export type BookmarkInfoType = {
   isBookmarkedByUser: boolean;
+};
+
+export function getCommentDataIncluded(loggedInUserId: string) {
+  return {
+    user: {
+      select: getUserDataSelect(loggedInUserId),
+    },
+  } satisfies Prisma.CommentInclude;
+}
+
+export type CommentDataType = Prisma.CommentGetPayload<{
+  include: ReturnType<typeof getCommentDataIncluded>;
+}>;
+
+export type CommentsPage = {
+  comments: CommentDataType[];
+  prevCursor: string | null;
 };

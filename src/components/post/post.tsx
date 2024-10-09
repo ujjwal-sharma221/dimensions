@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Media } from "@prisma/client";
 import Image from "next/image";
+import { useState } from "react";
 
 import { PostDataType } from "@/lib/types";
 import { UserAvatar } from "../user-avatar";
@@ -13,6 +14,8 @@ import { Linkify } from "../linkify";
 import { UserToolTip } from "../user-tooltip";
 import { LikeButton } from "./like-button";
 import { BookmarkButton } from "./bookmark-button";
+import { CommentButton } from "../comments/_components/comment-button";
+import { Comments } from "../comments/_components/comments";
 
 interface PostProps {
   post: PostDataType;
@@ -20,6 +23,8 @@ interface PostProps {
 
 export const Post = ({ post }: PostProps) => {
   const { user } = useSession();
+  const [showComments, setShowComments] = useState(false);
+
   return (
     <article className="group/post space-y-3 rounded-2xl bg-[#f0f1f4] p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3">
@@ -62,13 +67,20 @@ export const Post = ({ post }: PostProps) => {
       )}
       <hr className="text-muted-foreground" />
       <div className="flex justify-between gap-5">
-        <LikeButton
-          postId={post.id}
-          intialState={{
-            likes: post._count.likes,
-            isLikedByUser: post.likes.some((like) => like.userId === user.id),
-          }}
-        />
+        <div className="flex items-center gap-5">
+          <LikeButton
+            postId={post.id}
+            intialState={{
+              likes: post._count.likes,
+              isLikedByUser: post.likes.some((like) => like.userId === user.id),
+            }}
+          />
+          <CommentButton
+            post={post}
+            onClick={() => setShowComments(!showComments)}
+          />
+        </div>
+
         <BookmarkButton
           postId={post.id}
           intialState={{
@@ -78,6 +90,7 @@ export const Post = ({ post }: PostProps) => {
           }}
         />
       </div>
+      {showComments && <Comments post={post} />}
     </article>
   );
 };
