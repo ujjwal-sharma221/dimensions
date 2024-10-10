@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BellDot, BookMarked, House, MessageSquareText } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   CommandDialog,
@@ -14,8 +15,25 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
+import { NotificationCountType } from "@/lib/types";
+import kyInstance from "@/lib/ky";
 
-export const CommandBar = ({ className }: { className?: string }) => {
+export const CommandBar = ({
+  className,
+  intialState,
+}: {
+  className?: string;
+  intialState: NotificationCountType;
+}) => {
+  const { data } = useQuery({
+    queryKey: ["unread-notification-count"],
+    queryFn: () =>
+      kyInstance
+        .get("/api/notifications/unread-count")
+        .json<NotificationCountType>(),
+    initialData: intialState,
+    refetchInterval: 60 * 1000,
+  });
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -69,8 +87,15 @@ export const CommandBar = ({ className }: { className?: string }) => {
                 setOpen(false);
               }}
             >
-              <BellDot className="mr-2" />
-              <Link href="/messages">Notifications</Link>
+              <div className="relative">
+                <BellDot />
+                {!!data.unreadCount && (
+                  <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-1 text-xs font-medium tabular-nums text-white">
+                    {data.unreadCount}
+                  </span>
+                )}
+              </div>
+              <span className="ml-2 hidden lg:inline">Notifications</span>
             </CommandItem>
 
             <CommandItem

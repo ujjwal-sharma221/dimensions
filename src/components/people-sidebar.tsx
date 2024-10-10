@@ -14,15 +14,16 @@ export function TrendsSidebar() {
   return (
     <div className="spacey-y-5 top-0 hidden h-fit w-72 flex-none md:block lg:w-80">
       <Suspense fallback={<Satellite className="mx-auto animate-pulse" />}>
-        <WhoTofollow />
+        <WhoToFollow />
       </Suspense>
     </div>
   );
 }
 
-async function WhoTofollow() {
+async function WhoToFollow() {
   const { user } = await validateRequest();
-  if (!user) return;
+
+  if (!user) return null;
 
   const usersToFollow = await prisma.user.findMany({
     where: {
@@ -30,7 +31,9 @@ async function WhoTofollow() {
         id: user.id,
       },
       followers: {
-        none: { followerId: user.id },
+        none: {
+          followerId: user.id,
+        },
       },
     },
     select: getUserDataSelect(user.id),

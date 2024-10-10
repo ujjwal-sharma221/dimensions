@@ -82,3 +82,31 @@ export type CommentsPage = {
   comments: CommentDataType[];
   prevCursor: string | null;
 };
+
+export const NotificationInclude = {
+  issuer: {
+    select: {
+      username: true,
+      displayName: true,
+      avatarUrl: true,
+    },
+  },
+  post: {
+    select: {
+      content: true,
+    },
+  },
+} satisfies Prisma.NotificationInclude;
+
+export type NotificationDataType = Prisma.NotificationGetPayload<{
+  include: typeof NotificationInclude;
+}>;
+
+export type NotificationsPage = {
+  notifications: NotificationDataType[];
+  nextCursor: string | null;
+};
+
+export type NotificationCountType = {
+  unreadCount: number;
+};

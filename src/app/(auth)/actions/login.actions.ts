@@ -1,13 +1,13 @@
 "use server";
 
-import { isRedirectError } from "next/dist/client/components/redirect";
-import { redirect } from "next/navigation";
 import { verify } from "@node-rs/argon2";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { loginSchema, LoginValues } from "@/lib/validation-schema";
-import prisma from "@/lib/prisma";
 import { lucia } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { loginSchema, LoginValues } from "@/lib/validation-schema";
 
 export async function login(
   credentials: LoginValues,
@@ -16,10 +16,19 @@ export async function login(
     const { username, password } = loginSchema.parse(credentials);
 
     const existingUser = await prisma.user.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
+      where: {
+        username: {
+          equals: username,
+          mode: "insensitive",
+        },
+      },
     });
-    if (!existingUser || !existingUser.passwordHash)
-      return { error: "Incorrect values" };
+
+    if (!existingUser || !existingUser.passwordHash) {
+      return {
+        error: "Incorrect username or password",
+      };
+    }
 
     const validPassword = await verify(existingUser.passwordHash, password, {
       memoryCost: 19456,
@@ -27,7 +36,12 @@ export async function login(
       outputLen: 32,
       parallelism: 1,
     });
-    if (!validPassword) return { error: "Incorrect values" };
+
+    if (!validPassword) {
+      return {
+        error: "Incorrect username or password",
+      };
+    }
 
     const session = await lucia.createSession(existingUser.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
@@ -41,6 +55,8 @@ export async function login(
   } catch (error) {
     if (isRedirectError(error)) throw error;
     console.error(error);
-    return { error: "Something went wrong, try again later" };
+    return {
+      error: "Something went wrong. Please try again.",
+    };
   }
 }

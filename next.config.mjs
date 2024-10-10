@@ -5,7 +5,7 @@ const nextConfig = {
       dynamic: 30,
     },
   },
-  serverComponentsExternalPackages: ["@node-rs/argon2"],
+  // Images config
   images: {
     remotePatterns: [
       {
@@ -14,6 +14,18 @@ const nextConfig = {
         pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
       },
     ],
+  },
+  // Webpack configuration to handle @node-rs/argon2
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = config.externals || [];
+      // Exclude @node-rs/argon2 from being bundled by Webpack
+      config.externals.push({
+        "@node-rs/argon2": "@node-rs/argon2",
+      });
+    }
+
+    return config;
   },
 };
 
