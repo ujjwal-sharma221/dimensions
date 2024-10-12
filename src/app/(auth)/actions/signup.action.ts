@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { signUpSchema, SignUpValues } from "@/lib/validation-schema";
 import prisma from "@/lib/prisma";
 import { lucia } from "@/lib/auth";
+import streamServerClient from "@/lib/stream";
 
 export async function signUp(
   credentials: SignUpValues,
@@ -34,14 +35,22 @@ export async function signUp(
     });
     if (existingEmail) return { error: "Email already taken" };
 
-    await prisma.user.create({
-      data: {
+    await prisma.$transaction(async (tx) => {
+      await tx.user.create({
+        data: {
+          id: userId,
+          username,
+          email,
+          passwordHash: hashedPassword,
+          displayName: username,
+        },
+      });
+
+      await streamServerClient.upsertUser({
         id: userId,
         username,
-        email,
-        passwordHash: hashedPassword,
-        displayName: username,
-      },
+        name: username,
+      });
     });
 
     const session = await lucia.createSession(userId, {});
