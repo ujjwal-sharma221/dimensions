@@ -1,7 +1,7 @@
 "use server";
 
 import { hash } from "@node-rs/argon2";
-import { generateIdFromEntropySize } from "Lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
