@@ -5,7 +5,6 @@ const nextConfig = {
       dynamic: 30,
     },
   },
-  // Images config
   images: {
     remotePatterns: [
       {
@@ -15,11 +14,17 @@ const nextConfig = {
       },
     ],
   },
-  // Webpack configuration to handle @node-rs/argon2
+  rewrites: () => {
+    return [
+      {
+        source: "/hashtag/:tag",
+        destination: "/search?q=%23:tag",
+      },
+    ];
+  },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals || [];
-      // Exclude @node-rs/argon2 from being bundled by Webpack
       config.externals.push({
         "@node-rs/argon2": "@node-rs/argon2",
       });

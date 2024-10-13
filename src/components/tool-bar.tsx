@@ -85,7 +85,7 @@ export function ToolbarDynamic() {
                       name="q"
                       className="h-9 w-full rounded-lg border border-zinc-950/10 bg-transparent p-2 text-sm text-zinc-900 placeholder-zinc-500 focus:outline-none"
                       autoFocus
-                      placeholder="Search for people"
+                      placeholder="Search for anything"
                     />
                   </form>
                 </div>
