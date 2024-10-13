@@ -7,7 +7,7 @@ import {
 import { toast } from "sonner";
 
 import { delteComment, submitComment } from "./actions/submit.action";
-import { CommentDataType, CommentsPage } from "@/lib/types";
+import { CommentsPage } from "@/lib/types";
 
 export function useSubmitCommentMutation(postId: string) {
   const queryClient = useQueryClient();
@@ -71,7 +71,7 @@ export function useDeleteCommentMutation() {
             pageParams: oldData.pageParams,
             pages: oldData.pages.map((page) => ({
               prevCursor: page.prevCursor,
-              comments: page.comments.filter((c) => c.id !== delteComment.id),
+              comments: page.comments.filter((c) => c.id !== deletedComment.id),
             })),
           };
         },

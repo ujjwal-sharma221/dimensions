@@ -186,7 +186,7 @@ interface AttachmentPreviewProps {
 }
 
 function AttachmentPreview({
-  previewAttachments: { file, mediaId, isUploading },
+  previewAttachments: { file, isUploading },
   onRemoveClick,
 }: AttachmentPreviewProps) {
   const src = URL.createObjectURL(file);
