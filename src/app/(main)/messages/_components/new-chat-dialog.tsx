@@ -64,7 +64,7 @@ export function NewChatDialog({
         members: [loggedInUser.id, ...selectedUsers.map((u) => u.id)],
         name:
           selectedUsers.length > 1
-            ? loggedInUser.displayName +
+            ? loggedInUser.username +
               "," +
               selectedUsers.map((u) => u.name).join(", ")
             : undefined,
