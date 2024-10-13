@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BellDot, BookMarked, House, MessageSquareText } from "lucide-react";
+import { BellDot, BookMarked, House, MessageSquareDot } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -15,15 +15,17 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { NotificationCountType } from "@/lib/types";
+import { NotificationCountType, MessageInfoCount } from "@/lib/types";
 import kyInstance from "@/lib/ky";
 
 export const CommandBar = ({
   className,
-  intialState,
+  intialNotificationState,
+  initialMessageState,
 }: {
   className?: string;
-  intialState: NotificationCountType;
+  intialNotificationState: NotificationCountType;
+  initialMessageState: MessageInfoCount;
 }) => {
   const { data } = useQuery({
     queryKey: ["unread-notification-count"],
@@ -31,9 +33,18 @@ export const CommandBar = ({
       kyInstance
         .get("/api/notifications/unread-count")
         .json<NotificationCountType>(),
-    initialData: intialState,
+    initialData: intialNotificationState,
     refetchInterval: 60 * 1000,
   });
+
+  const { data: messageData } = useQuery({
+    queryKey: ["unread-message-count"],
+    queryFn: () =>
+      kyInstance.get("/api/messages/unread-count").json<MessageInfoCount>(),
+    initialData: initialMessageState,
+    refetchInterval: 60 * 1000,
+  });
+
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -77,8 +88,15 @@ export const CommandBar = ({
                 setOpen(false);
               }}
             >
-              <MessageSquareText className="mr-2" />
-              <Link href="/messages">Messages</Link>
+              <div className="relative">
+                <MessageSquareDot />
+                {!!messageData.unreadCount && (
+                  <span className="absolute -right-1 -top-1 rounded-full bg-sky-600 px-1 text-xs font-medium tabular-nums text-white">
+                    {messageData.unreadCount}
+                  </span>
+                )}
+              </div>
+              <span className="ml-2 hidden lg:inline">Messages</span>
             </CommandItem>
 
             <CommandItem

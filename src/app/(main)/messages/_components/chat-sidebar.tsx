@@ -2,9 +2,11 @@ import {
   ChannelList,
   ChannelPreviewMessenger,
   ChannelPreviewUIComponentProps,
+  useChatContext,
 } from "stream-chat-react";
 import { MessageSquarePlus, SquareX } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useSession } from "@/lib/session-provider";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,15 @@ interface ChatSidebarProps {
 
 export function ChatSidebar({ open, onClose }: ChatSidebarProps) {
   const { user } = useSession();
+
+  const queryClient = useQueryClient();
+  const { channel } = useChatContext();
+
+  useEffect(() => {
+    if (channel?.id) {
+      queryClient.invalidateQueries({ queryKey: ["unread-message-count"] });
+    }
+  }, [channel?.id, queryClient]);
 
   const ChannelPreviewCustom = useCallback(
     (props: ChannelPreviewUIComponentProps) => {

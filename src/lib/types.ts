@@ -110,3 +110,7 @@ export type NotificationsPage = {
 export type NotificationCountType = {
   unreadCount: number;
 };
+
+export type MessageInfoCount = {
+  unreadCount: number;
+};
