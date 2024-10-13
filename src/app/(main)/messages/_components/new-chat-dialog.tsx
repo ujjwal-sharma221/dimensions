@@ -29,6 +29,7 @@ export function NewChatDialog({
 }: NewChatDialogProps) {
   const { client, setActiveChannel } = useChatContext();
   const { user: loggedInUser } = useSession();
+  const name = loggedInUser.displayName;
 
   const [searchInput, setSearchInput] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<
@@ -64,9 +65,7 @@ export function NewChatDialog({
         members: [loggedInUser.id, ...selectedUsers.map((u) => u.id)],
         name:
           selectedUsers.length > 1
-            ? loggedInUser.username +
-              "," +
-              selectedUsers.map((u) => u.name).join(", ")
+            ? name + "," + selectedUsers.map((u) => u.name).join(", ")
             : undefined,
       });
       await channel.create();
